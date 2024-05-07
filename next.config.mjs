@@ -4,7 +4,10 @@ const nextConfig = {
     remotePatterns: [
       { hostname: 'res.cloudinary.com' },
     ]
-  }
+  },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 export default nextConfig;
