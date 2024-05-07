@@ -1,4 +1,5 @@
 import { Metadata, ResolvingMetadata } from "next";
+import Image from "next/image";
 
 type Props = {
   params: { slug: string };
@@ -21,16 +22,19 @@ export async function generateMetadata(
   return {
     title: `Post - ${slug}`,
     openGraph: {
-      images: [
-        `https://nextjs-og-sample.vercel.app/posts/${slug}/opengraph-image`,
-        ...previousImages,
-      ],
+      images: [searchParams.image as string, ...previousImages],
     },
     description: `Description for ${slug}`,
   };
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div
       style={{
@@ -55,6 +59,12 @@ export default function Page({ params }: { params: { slug: string } }) {
           color: "transparent",
         }}>
         {params.slug}
+        <Image
+          src={searchParams.image as string}
+          alt=""
+          width={512}
+          height={512}
+        />
       </div>
     </div>
   );
