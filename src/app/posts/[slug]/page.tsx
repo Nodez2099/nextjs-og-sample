@@ -53,7 +53,7 @@ export default function Page({
           height={512}
         />
         <div className="p-3 bg-[#DCDCDC]">
-          <div className="text-blue-400">{`${host}/posts/${params.slug}`}</div>
+          <div className="text-blue-400">{host}</div>
           <div className="font-bold">{`Post - ${searchParams.title}`}</div>
           <p className="line-clamp-1">{searchParams.description}</p>
         </div>
