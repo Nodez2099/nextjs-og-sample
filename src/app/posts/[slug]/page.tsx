@@ -1,5 +1,6 @@
 import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
+import { headers } from "next/headers";
 
 type Props = {
   params: { slug: string };
@@ -24,7 +25,7 @@ export async function generateMetadata(
     openGraph: {
       images: [searchParams.image as string, ...previousImages],
     },
-    description: `Description for ${slug}`,
+    description: searchParams.description as string,
   };
 }
 
@@ -35,36 +36,32 @@ export default function Page({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const headersList = headers();
+  const host = headersList.get("host") || "";
+
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100svh",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        backgroundImage: "linear-gradient(to bottom, #dbf4ff, #fff1f1)",
-        fontSize: 60,
-        letterSpacing: -2,
-        fontWeight: 700,
-        textAlign: "center",
-      }}>
-      <div
-        style={{
-          backgroundImage:
-            "linear-gradient(90deg, rgb(0, 124, 240), rgb(0, 223, 216))",
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
-        }}>
-        {params.slug}
+    <div className="min-h-svh flex flex-col gap-4 justify-center items-center">
+      <div className="text-5xl font-medium">
+        Your social shared link preview
+      </div>
+      <div className="max-w-3xl rounded-2xl overflow-clip">
         <Image
+          className="w-full max-h-[512px] object-cover"
           src={searchParams.image as string}
           alt=""
           width={512}
           height={512}
         />
+        <div className="p-3 bg-[#DCDCDC]">
+          <div className="text-blue-400">{`${host}/posts/${params.slug}`}</div>
+          <div className="font-bold">{`Post - ${searchParams.title}`}</div>
+          <p className="line-clamp-1">
+            {searchParams.description} Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Nihil maxime enim consectetur. Consequuntur,
+            quisquam, eaque ea officia porro natus corrupti explicabo sunt,
+            voluptatem eum assumenda cum. Accusantium omnis vel tempore!
+          </p>
+        </div>
       </div>
     </div>
   );

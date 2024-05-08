@@ -2,32 +2,19 @@
 
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string>();
-  const [resource, setResource] = useState<any>();
 
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  // const hostname = window.location.hostname;
+  const href = window.location.href;
 
-  // const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       const base64String = reader.result as string;
-  //       localStorage.setItem("image", base64String);
-  //     };
-  //     setSelectedImage(URL.createObjectURL(file));
-  //   }
-  // };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const params = new URLSearchParams(searchParams);
@@ -38,17 +25,24 @@ export default function Home() {
     // Get the values of the form fields
     const title = formData.get("title");
     const description = formData.get("description");
-    // const image = localStorage.getItem('image');
 
     // Set the values of the form fields as query parameters
     params.set("title", title as string);
     params.set("description", description as string);
     params.set("image", selectedImage as string);
 
-    console.log("image", selectedImage);
+    try {
+      await navigator.clipboard.writeText(
+        `${href}/posts/${title}?${params.toString()}`
+      );
+      toast.success("Link copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+      console.error(err);
+    }
 
-    // Redirect to the new URL with the query parameters
-    router.push(`/posts/${title}?${params.toString()}`);
+    // // Redirect to the new URL with the query parameters
+    // router.push(`/posts/${title}?${params.toString()}`);
   };
 
   return (
@@ -81,23 +75,19 @@ export default function Home() {
           required
         />
         <label htmlFor="photo-upload">Upload a Photo</label>
-
         <CldUploadWidget
           uploadPreset="kwifgs7z"
           onSuccess={(results) => {
-            // console.log("results", results);
             const info = results.info as CloudinaryUploadWidgetInfo;
-
-            console.log("info", info);
 
             if (info) {
               setSelectedImage(info.secure_url);
             }
-            // results.info && setResource(results.info);
           }}>
           {({ open }) => {
             return (
               <button
+                type="button"
                 className="grid place-items-center h-64 rounded-lg border border-[#CCCCCC] bg-[#F3F3F3]"
                 onClick={() => open()}>
                 {!selectedImage && (
@@ -122,42 +112,18 @@ export default function Home() {
             );
           }}
         </CldUploadWidget>
-        {/* <input
-          id="photo-upload"
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageUpload}
-        />
-
-        <label
-          htmlFor="photo-upload"
-          className="grid place-items-center h-64 rounded-lg border border-[#CCCCCC] bg-[#F3F3F3]">
-          {!selectedImage && (
-            <Image
-              src="/icons/ic-add-photo.svg"
-              alt="Add Photo Icon"
-              width={48}
-              height={48}
-              priority
-            />
-          )}
-          {selectedImage && (
-            <Image
-              src={selectedImage as string}
-              alt="Selected"
-              className="object-contain h-64 w-full"
-              width={48}
-              height={48}
-              onLoad={() => URL.revokeObjectURL(selectedImage)}
-            />
-          )}
-        </label> */}
-
         <button className="p-3 rounded-lg bg-sky-400 text-white font-bold">
           Generate and copy Link
         </button>
       </form>
+      <ToastContainer
+        position="bottom-center"
+        hideProgressBar
+        theme="light"
+        autoClose={2_000}
+        closeOnClick
+        limit={1}
+      />
     </main>
   );
 }
