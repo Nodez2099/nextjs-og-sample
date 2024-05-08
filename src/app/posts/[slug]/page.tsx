@@ -55,12 +55,7 @@ export default function Page({
         <div className="p-3 bg-[#DCDCDC]">
           <div className="text-blue-400">{`${host}/posts/${params.slug}`}</div>
           <div className="font-bold">{`Post - ${searchParams.title}`}</div>
-          <p className="line-clamp-1">
-            {searchParams.description} Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Nihil maxime enim consectetur. Consequuntur,
-            quisquam, eaque ea officia porro natus corrupti explicabo sunt,
-            voluptatem eum assumenda cum. Accusantium omnis vel tempore!
-          </p>
+          <p className="line-clamp-1">{searchParams.description}</p>
         </div>
       </div>
     </div>
